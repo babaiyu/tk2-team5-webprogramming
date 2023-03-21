@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
+use function PHPSTORM_META\map;
+
 class ScoreController extends Controller
 {
     private function calculateScore(
@@ -36,6 +38,16 @@ class ScoreController extends Controller
             'score' => $calculated,
             'grade' => $grade,
         ];
+    }
+
+    private function calculateAverage($total_score, $total)
+    {
+        if ($total_score > 0 && $total > 0) {
+            $result = $total_score / $total;
+            return $result;
+        }
+
+        return 0;
     }
 
     public function getStudentsScore()
@@ -209,5 +221,51 @@ class ScoreController extends Controller
                 'message' => 'Cannot find nim ' . $nim . '! ' . 'Please try another way',
             ])
             ->setStatusCode(404);
+    }
+
+    public function gradeChart()
+    {
+        $students = Student::all();
+        $students = $students->map(function ($item) {
+            $calculated = $this->calculateScore(
+                $item->score_quis,
+                $item->score_tugas,
+                $item->score_presensi,
+                $item->score_praktek,
+                $item->score_uas
+            );
+            return $calculated;
+        });
+
+        $gradeLabel = ['A', 'B', 'C', 'D'];
+        $grades = array();
+
+        foreach ($gradeLabel as $value) {
+            $sumGrade = 0;
+            $sumScore = 0;
+            $average = 0;
+
+            foreach ($students as $sKey => $sValue) {
+                if ($sValue['grade'] == $value) {
+                    $sumGrade++;
+                    $sumScore += $sValue['score'];
+                }
+            }
+
+            $average = $this->calculateAverage($sumScore, $sumGrade);
+            $result = [
+                'grade' => $value,
+                'total_student_grade' => $sumGrade,
+                'total_score' => $sumScore,
+                'total_average' => $average,
+            ];
+            array_push($grades, $result);
+        }
+
+        return response()
+            ->json([
+                'data' => $grades,
+                'message' => 'Success get all Students',
+            ]);
     }
 }

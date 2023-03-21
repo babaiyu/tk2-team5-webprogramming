@@ -26,4 +26,6 @@ Route::controller(ScoreController::class)->group(function () {
     Route::post('/student-score', 'postStudentScore');
     Route::put('/student-score/{nim}', 'updateStudentScore');
     Route::delete('/student-score/{nim}', 'deleteStudentScore');
+
+    Route::get('/student-scores/chart', 'gradeChart');
 });
