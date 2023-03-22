@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostScoreRequest;
+use App\Http\Requests\PutScoreRequest;
 use App\Models\Student;
 use Illuminate\Http\Request;
-
-use function PHPSTORM_META\map;
 
 class ScoreController extends Controller
 {
@@ -123,7 +123,7 @@ class ScoreController extends Controller
             ->setStatusCode(404);
     }
 
-    public function postStudentScore(Request $request)
+    public function postStudentScore(PostScoreRequest $request)
     {
         $findStudent = Student::where('nim', $request->input('nim'))->get();
 
@@ -157,7 +157,7 @@ class ScoreController extends Controller
             ->setStatusCode(400);
     }
 
-    public function updateStudentScore(Request $request, string $nim)
+    public function updateStudentScore(PutScoreRequest $request, string $nim)
     {
         $student = Student::where('nim', $nim)->get();
 
