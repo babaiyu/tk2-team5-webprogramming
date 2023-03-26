@@ -6,6 +6,7 @@ use App\Http\Requests\PostScoreRequest;
 use App\Http\Requests\PutScoreRequest;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ScoreController extends Controller
 {
@@ -267,5 +268,10 @@ class ScoreController extends Controller
                 'data' => $grades,
                 'message' => 'Success get all Students',
             ]);
+    }
+
+    public function show()
+    {
+        return Inertia::render('HomeView');
     }
 }
